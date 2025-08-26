@@ -65,19 +65,6 @@ To-Do-App/
 │── requirements.txt
 │── README.md
 ```
-
----
-
-
-## 🚀 Future Improvements
-
-* ✨ User authentication (login & signup)
-* 📱 Mobile responsive design
-* 📊 Task categories & priorities
-* 🔔 Notifications & reminders
-
----
-
 ## 🤝 Contributing
 
 Pull requests are welcome!
