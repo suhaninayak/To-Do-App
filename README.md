@@ -43,6 +43,7 @@ source env/bin/activate  # On Mac/Linux
 pip install -r requirements.txt
 
 # Run migrations
+python manage.py makemigrations
 python manage.py migrate
 
 # Start the development server
