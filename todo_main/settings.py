@@ -1,18 +1,15 @@
-from pathlib import Path
 import os
+from pathlib import Path
+import dj_database_url
+from decouple import config
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "your-secret-key"   # keep your current one
+SECRET_KEY = config("SECRET_KEY", default="django-insecure-123456")
 
-# SECURITY WARNING: don’t run with debug turned on in production!
-DEBUG = False   # ✅ turn off for production
+DEBUG = config("DEBUG", default=True, cast=bool)
 
-ALLOWED_HOSTS = ["localhost", "127.0.0.1", ".up.railway.app"]
-
-CSRF_TRUSTED_ORIGINS = ["https://*.up.railway.app"]
+ALLOWED_HOSTS = ["*"]  # 👈 allow Railway / localhost
 
 # Application definition
 INSTALLED_APPS = [
@@ -22,11 +19,12 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "todo",   # 👈 your app
 ]
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
-    "whitenoise.middleware.WhiteNoiseMiddleware",   # ✅ added for static files
+    "whitenoise.middleware.WhiteNoiseMiddleware",  # 👈 for static files on Railway
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -40,7 +38,7 @@ ROOT_URLCONF = "todo_main.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [BASE_DIR / "templates"],   # ✅ your templates folder
+        "DIRS": [BASE_DIR / "templates"],  # 👈 if you use templates folder
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -55,14 +53,13 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "todo_main.wsgi.application"
 
-# Database
-# For now: SQLite (default)
-# Later: Replace with Railway Postgres if you want persistence
+# Database (Postgres on Railway, SQLite locally)
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
-    }
+    "default": dj_database_url.config(
+        default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
+        conn_max_age=600,
+        ssl_require=False,
+    )
 }
 
 # Password validation
@@ -73,18 +70,14 @@ AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
 
-# Internationalization
 LANGUAGE_CODE = "en-us"
 TIME_ZONE = "UTC"
 USE_I18N = True
 USE_TZ = True
 
-# Static files (CSS, JavaScript, Images)
+# Static files
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
-# Optional: enable optimized static file storage
-# STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
-
-# Default primary key field type
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
